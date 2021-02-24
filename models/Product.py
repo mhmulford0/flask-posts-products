@@ -1,6 +1,6 @@
 from peewee import *
+from models.db import db
 
-db = SqliteDatabase('app.db')
 
 class Product(Model):
     id = AutoField

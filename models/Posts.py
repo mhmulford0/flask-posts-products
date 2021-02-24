@@ -1,6 +1,5 @@
 from peewee import *
-
-db = SqliteDatabase('app.db')
+from models.db import db
 
 class Post(Model):
     id = AutoField()
