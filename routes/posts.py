@@ -16,7 +16,7 @@ schema = {
 
 @post_blueprint.route('/', methods=['POST'])
 @expects_json(schema)
-def index():
+def add_post():
 
     title = g.data['title']
     content = g.data['content']
@@ -41,6 +41,7 @@ def get_all_posts():
 
 @post_blueprint.route('/<int:id>', methods=['GET'])
 def get_one_post(id):
+    
     one_post = {} 
     for post in Post.select().where(Post.id == id):
         one_post.update({'id': post.id, 'title': post.title, 'content': post.content})
@@ -55,8 +56,24 @@ def delete_post(id):
     try:
         post = Post.get(Post.id == id)
         post.delete_instance()
+        db.close()
         return {"msg": "post deleted"}, 200
     except:
+        db.close()
         return {"error": "post does not exists"}, 400
 
+@post_blueprint.route('/<int:id>', methods=['PUT'])
+@expects_json(schema)
+def update_post(id):
+    
+    title = g.data['title']
+    content = g.data['content']
+    query = Post.update(title=title, content=content).where(Post.id == id)
+    
+    if query.execute() == 1:
+        db.close()
+        return {'msg': 'post updated'}, 200
    
+    else:
+        db.close()
+        return {'error': 'post not found'}, 400
